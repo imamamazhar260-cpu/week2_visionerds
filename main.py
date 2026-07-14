@@ -39,7 +39,7 @@ print(similarity_matrix)
 print("\n========== SIMILARITY SCORES ==========\n")
 
 
-for i in range(len(sentences)):    #check sentences 1 with 1,2,3 2 with 1,2,3 3 with 1,2,3 total 9 comparisons
+for i in range(len(sentences)):
     for j in range(len(sentences)):
         print(f"Sentence {i+1}: {sentences[i]}")
         print(f"Sentence {j+1}: {sentences[j]}")
