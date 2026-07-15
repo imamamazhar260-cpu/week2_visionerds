@@ -4,9 +4,6 @@ from sentence_transformers import SentenceTransformer
 import json
 
 
-# -----------------------------
-# Load PDF
-# -----------------------------
 
 pdf_path = "week 12-13.pdf"
 
@@ -17,9 +14,6 @@ documents = loader.load()
 print("Total Pages:", len(documents))
 
 
-# -----------------------------
-# Chunking
-# -----------------------------
 
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=1500,
@@ -39,18 +33,13 @@ chunks = text_splitter.split_documents(documents)
 print("Total Chunks:", len(chunks))
 
 
-# -----------------------------
-# Load embedding model
-# -----------------------------
+
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
 print("Embedding model loaded")
 
 
-# -----------------------------
-# Create embeddings
-# -----------------------------
 
 texts = []
 
@@ -61,11 +50,6 @@ for chunk in chunks:
 embeddings = model.encode(texts)
 
 print("Embedding completed")
-
-
-# -----------------------------
-# Save chunk + metadata + embedding
-# -----------------------------
 
 data = []
 
@@ -92,9 +76,6 @@ for i, chunk in enumerate(chunks):
 
 
 
-# -----------------------------
-# Save JSON file
-# -----------------------------
 
 with open(
     "embedded_chunks.json",

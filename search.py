@@ -20,7 +20,7 @@ model = SentenceTransformer("all-MiniLM-L6-v2")
 
 
 
-query = "Explain indexes and their advantages"
+query = "Explain views and their advantages"
 
 
 
