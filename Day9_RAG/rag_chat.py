@@ -165,20 +165,32 @@ while True:
 
     context = ""
 
-    for item in retrieved_docs:
-        context += item["document"].page_content
-        context += "\n\n"
+    for i, item in enumerate(retrieved_docs, start=1):
 
+        doc = item["document"]
+        page = doc.metadata.get("page", 0) + 1
+
+        context += (
+           f"[Source {i} | Page {page}]\n"
+           f"{doc.page_content}\n\n"
+    )
     prompt = f"""
 You are a helpful AI Assistant.
 
-Answer ONLY using the context below.
+Answer ONLY using the provided context.
 
 Rules:
-1. Do not use outside knowledge.
-2. Do not guess.
-3. If the answer is not present in the context, reply exactly:
+1. Use ONLY the provided context.
+2. Do NOT use outside knowledge.
+3. Do NOT guess.
+4. If the answer is not present, reply exactly:
 I don't know.
+5. Every statement must cite its source using the Source number.
+   Example:
+   An index improves search performance. [Source 1]
+6. Do NOT invent source numbers.
+7. Do NOT invent page numbers.
+8. Use only the Source numbers shown in the context.
 
 Context:
 {context}
@@ -188,7 +200,6 @@ Question:
 
 Answer:
 """
-
     response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[
@@ -204,13 +215,23 @@ Answer:
 
     print("\n" + "=" * 80)
     print("ANSWER")
+
     print("=" * 80)
     print(answer)
-
     if "i don't know" in answer.lower():
-        continue
+     continue
+    
+    print("\nSources Used")
+    print("=" * 80)
 
-    print("\n" + "=" * 80)
+    for i, item in enumerate(retrieved_docs, start=1):
+
+       page = item["document"].metadata.get("page", 0) + 1
+       print(f"Source {i} -> Page {page}")
+
+    
+
+        
     print("RETRIEVED CHUNKS")
     print("=" * 80)
 
@@ -219,11 +240,13 @@ Answer:
         doc = item["document"]
 
         print(f"\nChunk {i}")
+        print(f"Retriever : {item['source']}")
 
         if item["score"] is not None:
             print(f"Similarity Score : {item['score']:.4f}")
 
-        print(f"Page : {doc.metadata.get('page')}")
+        page = doc.metadata.get("page", 0) + 1
+        print(f"Page : {page}")
 
         print("-" * 80)
         print(doc.page_content)
